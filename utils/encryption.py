@@ -5,7 +5,14 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 def _get_encryption_key():
-    secret = os.environ.get('ENCRYPTION_SECRET', 'dev-encryption-key-change-in-production')
+    secret = os.environ.get('ENCRYPTION_SECRET')
+    
+    if not secret:
+        raise ValueError(
+            'ENCRYPTION_SECRET environment variable is required for secure API key storage. '
+            'Please set a strong, random secret in your environment variables.'
+        )
+    
     salt = b'whatsapp_bot_salt'
     
     kdf = PBKDF2HMAC(

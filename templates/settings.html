@@ -62,18 +62,22 @@
                     
                     <div id="meta-fields" class="provider-fields" style="display: none;">
                         <h6 class="text-success mb-3">Meta Cloud API Credentials</h6>
+                        {% if user.has_meta_credentials() %}
+                        <div class="alert alert-success mb-3">
+                            <strong>✓ Meta API Configured</strong><br>
+                            <small>Credentials are securely stored. Enter new values below to update them.</small>
+                        </div>
+                        {% endif %}
                         <div class="mb-3">
                             <label for="meta_access_token" class="form-label">Access Token</label>
-                            <input type="text" class="form-control" id="meta_access_token" name="meta_access_token" 
-                                   value="{{ meta_credentials.access_token if meta_credentials.access_token else '' }}" 
-                                   placeholder="Enter your Meta WhatsApp Access Token">
+                            <input type="password" class="form-control" id="meta_access_token" name="meta_access_token" 
+                                   placeholder="{% if user.has_meta_credentials() %}••••••••••••••••••••{% else %}Enter your Meta WhatsApp Access Token{% endif %}">
                             <small class="text-muted">Get this from your Meta Developer Portal</small>
                         </div>
                         <div class="mb-3">
                             <label for="meta_phone_number_id" class="form-label">Phone Number ID</label>
-                            <input type="text" class="form-control" id="meta_phone_number_id" name="meta_phone_number_id" 
-                                   value="{{ meta_credentials.phone_number_id if meta_credentials.phone_number_id else '' }}" 
-                                   placeholder="Enter your Phone Number ID">
+                            <input type="password" class="form-control" id="meta_phone_number_id" name="meta_phone_number_id" 
+                                   placeholder="{% if user.has_meta_credentials() %}••••••••••••••••••••{% else %}Enter your Phone Number ID{% endif %}">
                             <small class="text-muted">Your WhatsApp Business Phone Number ID</small>
                         </div>
                         <div class="mb-3">
@@ -83,43 +87,35 @@
                                    placeholder="v21.0">
                             <small class="text-muted">Meta API version (default: v21.0)</small>
                         </div>
-                        {% if user.has_meta_credentials() %}
-                        <div class="alert alert-success">
-                            <strong>✓ Meta API Configured</strong><br>
-                            <small>Last updated: {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</small>
-                        </div>
-                        {% endif %}
                     </div>
                     
                     <div id="twilio-fields" class="provider-fields" style="display: none;">
                         <h6 class="text-primary mb-3">Twilio Credentials</h6>
+                        {% if user.has_twilio_credentials() %}
+                        <div class="alert alert-success mb-3">
+                            <strong>✓ Twilio API Configured</strong><br>
+                            <small>Credentials are securely stored. Enter new values below to update them.</small>
+                        </div>
+                        {% endif %}
                         <div class="mb-3">
                             <label for="twilio_account_sid" class="form-label">Account SID</label>
-                            <input type="text" class="form-control" id="twilio_account_sid" name="twilio_account_sid" 
-                                   value="{{ twilio_credentials.account_sid if twilio_credentials.account_sid else '' }}" 
-                                   placeholder="Enter your Twilio Account SID">
+                            <input type="password" class="form-control" id="twilio_account_sid" name="twilio_account_sid" 
+                                   placeholder="{% if user.has_twilio_credentials() %}••••••••••••••••••••{% else %}Enter your Twilio Account SID{% endif %}">
                             <small class="text-muted">Find this in your Twilio Console</small>
                         </div>
                         <div class="mb-3">
                             <label for="twilio_auth_token" class="form-label">Auth Token</label>
                             <input type="password" class="form-control" id="twilio_auth_token" name="twilio_auth_token" 
-                                   value="{{ twilio_credentials.auth_token if twilio_credentials.auth_token else '' }}" 
-                                   placeholder="Enter your Twilio Auth Token">
+                                   placeholder="{% if user.has_twilio_credentials() %}••••••••••••••••••••{% else %}Enter your Twilio Auth Token{% endif %}">
                             <small class="text-muted">Your Twilio authentication token</small>
                         </div>
                         <div class="mb-3">
                             <label for="twilio_whatsapp_number" class="form-label">WhatsApp Number</label>
                             <input type="text" class="form-control" id="twilio_whatsapp_number" name="twilio_whatsapp_number" 
-                                   value="{{ twilio_credentials.whatsapp_number if twilio_credentials.whatsapp_number else '' }}" 
+                                   value="{{ user.twilio_whatsapp_number if user.twilio_whatsapp_number else '' }}" 
                                    placeholder="whatsapp:+14155238886">
                             <small class="text-muted">Your Twilio WhatsApp sandbox number</small>
                         </div>
-                        {% if user.has_twilio_credentials() %}
-                        <div class="alert alert-success">
-                            <strong>✓ Twilio API Configured</strong><br>
-                            <small>Last updated: {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</small>
-                        </div>
-                        {% endif %}
                     </div>
                     
                     <button type="submit" class="btn btn-success">Save API Configuration</button>
