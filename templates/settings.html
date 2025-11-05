@@ -39,7 +39,7 @@
     </div>
 
     <!-- API Configuration -->
-    <div class="col-md-6 mb-4">
+    <div class="col-md-12 mb-4">
         <div class="card">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0">🔌 API Configuration</h5>
@@ -48,43 +48,83 @@
                 <form method="POST">
                     <input type="hidden" name="form_type" value="api">
                     <div class="mb-3">
-                        <label for="whatsapp_provider" class="form-label">WhatsApp Provider</label>
-                        <select class="form-select" id="whatsapp_provider" name="whatsapp_provider">
+                        <label for="whatsapp_provider" class="form-label fw-bold">WhatsApp Provider</label>
+                        <select class="form-select" id="whatsapp_provider" name="whatsapp_provider" onchange="toggleProviderFields()">
                             <option value="meta" {% if current_provider == 'meta' %}selected{% endif %}>Meta Cloud API (Free)</option>
                             <option value="twilio" {% if current_provider == 'twilio' %}selected{% endif %}>Twilio</option>
                         </select>
                         <small class="text-muted">Select your WhatsApp messaging provider</small>
                     </div>
                     
-                    <div class="alert alert-info mt-3">
-                        <strong>API Status:</strong>
-                        <ul class="mb-0 mt-2">
-                            <li>Meta API: 
-                                {% if env_status.meta_configured %}
-                                    <span class="badge bg-success">Configured ✓</span>
-                                {% else %}
-                                    <span class="badge bg-warning">Not Configured</span>
-                                {% endif %}
-                            </li>
-                            <li>Twilio API: 
-                                {% if env_status.twilio_configured %}
-                                    <span class="badge bg-success">Configured ✓</span>
-                                {% else %}
-                                    <span class="badge bg-warning">Not Configured</span>
-                                {% endif %}
-                            </li>
-                        </ul>
+                    <div class="alert alert-info mb-3">
+                        <strong>🔐 Security:</strong> Your API keys are encrypted and stored securely in the database.
                     </div>
                     
-                    <button type="submit" class="btn btn-success">Save API Settings</button>
+                    <div id="meta-fields" class="provider-fields" style="display: none;">
+                        <h6 class="text-success mb-3">Meta Cloud API Credentials</h6>
+                        <div class="mb-3">
+                            <label for="meta_access_token" class="form-label">Access Token</label>
+                            <input type="text" class="form-control" id="meta_access_token" name="meta_access_token" 
+                                   value="{{ meta_credentials.access_token if meta_credentials.access_token else '' }}" 
+                                   placeholder="Enter your Meta WhatsApp Access Token">
+                            <small class="text-muted">Get this from your Meta Developer Portal</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="meta_phone_number_id" class="form-label">Phone Number ID</label>
+                            <input type="text" class="form-control" id="meta_phone_number_id" name="meta_phone_number_id" 
+                                   value="{{ meta_credentials.phone_number_id if meta_credentials.phone_number_id else '' }}" 
+                                   placeholder="Enter your Phone Number ID">
+                            <small class="text-muted">Your WhatsApp Business Phone Number ID</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="meta_api_version" class="form-label">API Version (optional)</label>
+                            <input type="text" class="form-control" id="meta_api_version" name="meta_api_version" 
+                                   value="{{ user.meta_api_version if user.meta_api_version else 'v21.0' }}" 
+                                   placeholder="v21.0">
+                            <small class="text-muted">Meta API version (default: v21.0)</small>
+                        </div>
+                        {% if user.has_meta_credentials() %}
+                        <div class="alert alert-success">
+                            <strong>✓ Meta API Configured</strong><br>
+                            <small>Last updated: {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div id="twilio-fields" class="provider-fields" style="display: none;">
+                        <h6 class="text-primary mb-3">Twilio Credentials</h6>
+                        <div class="mb-3">
+                            <label for="twilio_account_sid" class="form-label">Account SID</label>
+                            <input type="text" class="form-control" id="twilio_account_sid" name="twilio_account_sid" 
+                                   value="{{ twilio_credentials.account_sid if twilio_credentials.account_sid else '' }}" 
+                                   placeholder="Enter your Twilio Account SID">
+                            <small class="text-muted">Find this in your Twilio Console</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="twilio_auth_token" class="form-label">Auth Token</label>
+                            <input type="password" class="form-control" id="twilio_auth_token" name="twilio_auth_token" 
+                                   value="{{ twilio_credentials.auth_token if twilio_credentials.auth_token else '' }}" 
+                                   placeholder="Enter your Twilio Auth Token">
+                            <small class="text-muted">Your Twilio authentication token</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="twilio_whatsapp_number" class="form-label">WhatsApp Number</label>
+                            <input type="text" class="form-control" id="twilio_whatsapp_number" name="twilio_whatsapp_number" 
+                                   value="{{ twilio_credentials.whatsapp_number if twilio_credentials.whatsapp_number else '' }}" 
+                                   placeholder="whatsapp:+14155238886">
+                            <small class="text-muted">Your Twilio WhatsApp sandbox number</small>
+                        </div>
+                        {% if user.has_twilio_credentials() %}
+                        <div class="alert alert-success">
+                            <strong>✓ Twilio API Configured</strong><br>
+                            <small>Last updated: {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Save API Configuration</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="showApiGuide()">View Setup Guide</button>
                 </form>
-                
-                <hr>
-                <div class="mt-3">
-                    <h6>Configure API Keys:</h6>
-                    <p class="small text-muted">API keys must be set in Replit Secrets (🔒 icon in sidebar)</p>
-                    <button class="btn btn-sm btn-outline-primary" onclick="showApiGuide()">View Setup Guide</button>
-                </div>
             </div>
         </div>
     </div>
@@ -202,5 +242,23 @@
 function showApiGuide() {
     window.location.href = "{{ url_for('bots.guide') }}";
 }
+
+function toggleProviderFields() {
+    const provider = document.getElementById('whatsapp_provider').value;
+    const metaFields = document.getElementById('meta-fields');
+    const twilioFields = document.getElementById('twilio-fields');
+    
+    if (provider === 'meta') {
+        metaFields.style.display = 'block';
+        twilioFields.style.display = 'none';
+    } else {
+        metaFields.style.display = 'none';
+        twilioFields.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    toggleProviderFields();
+});
 </script>
 {% endblock %}

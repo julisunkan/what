@@ -12,7 +12,6 @@ from models.user import User
 from services.whatsapp_service import WhatsAppService
 
 whatsapp_bp = Blueprint('whatsapp', __name__, url_prefix='/whatsapp')
-whatsapp_service = WhatsAppService()
 
 def validate_twilio_request():
     auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
@@ -147,7 +146,8 @@ def meta_webhook():
                 user = User.query.filter_by(phone_number=from_number).first()
 
                 if not user:
-                    # User not registered, send welcome message
+                    # User not registered, send welcome message (use fallback to env vars)
+                    whatsapp_service = WhatsAppService()
                     whatsapp_service.send_message(from_number, 
                         "Welcome! Please register on our platform to use this bot service.")
                     return jsonify({'status': 'ok'}), 200
@@ -156,6 +156,8 @@ def meta_webhook():
                 active_bot = Bot.query.filter_by(user_id=user.id, active=True).first()
 
                 if not active_bot:
+                    # Use user-specific WhatsApp service
+                    whatsapp_service = WhatsAppService(user)
                     whatsapp_service.send_message(from_number, 
                         "You don't have an active bot. Please create and activate a bot on the dashboard.")
                     return jsonify({'status': 'ok'}), 200
@@ -199,7 +201,8 @@ def meta_webhook():
                 db.session.add(outgoing_log)
                 db.session.commit()
 
-                # Send response via WhatsApp
+                # Send response via WhatsApp using user's credentials
+                whatsapp_service = WhatsAppService(user)
                 whatsapp_service.send_message(from_number, response_text)
 
                 return jsonify({'status': 'ok'}), 200
@@ -215,11 +218,17 @@ def test_send():
     data = request.get_json()
     to_number = data.get('to')
     message = data.get('message')
+    user_id = data.get('user_id')
     
     if not to_number or not message:
         return jsonify({'error': 'Missing to or message'}), 400
     
     try:
+        user = None
+        if user_id:
+            user = User.query.get(user_id)
+        
+        whatsapp_service = WhatsAppService(user)
         message_id = whatsapp_service.send_message(to_number, message)
         return jsonify({'status': 'success', 'message_id': message_id})
     except Exception as e:

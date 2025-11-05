@@ -3,23 +3,43 @@ import requests
 from twilio.rest import Client
 
 class WhatsAppService:
-    def __init__(self):
-        self.provider = os.environ.get('WHATSAPP_PROVIDER', 'twilio')
+    def __init__(self, user=None):
+        if user:
+            self.provider = user.whatsapp_provider or 'meta'
+            
+            if self.provider == 'twilio':
+                twilio_creds = user.get_twilio_credentials()
+                self.account_sid = twilio_creds.get('account_sid')
+                self.auth_token = twilio_creds.get('auth_token')
+                self.from_number = twilio_creds.get('whatsapp_number') or 'whatsapp:+14155238886'
 
-        if self.provider == 'twilio':
-            self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-            self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-            self.from_number = os.environ.get('TWILIO_WHATSAPP_NUMBER', 'whatsapp:+14155238886')
+                if self.account_sid and self.auth_token:
+                    self.client = Client(self.account_sid, self.auth_token)
+                else:
+                    self.client = None
 
-            if self.account_sid and self.auth_token:
-                self.client = Client(self.account_sid, self.auth_token)
-            else:
-                self.client = None
+            elif self.provider == 'meta':
+                meta_creds = user.get_meta_credentials()
+                self.access_token = meta_creds.get('access_token')
+                self.phone_number_id = meta_creds.get('phone_number_id')
+                self.api_version = meta_creds.get('api_version') or 'v21.0'
+        else:
+            self.provider = os.environ.get('WHATSAPP_PROVIDER', 'twilio')
 
-        elif self.provider == 'meta':
-            self.access_token = os.environ.get('META_WHATSAPP_TOKEN')
-            self.phone_number_id = os.environ.get('META_PHONE_NUMBER_ID')
-            self.api_version = os.environ.get('META_API_VERSION', 'v21.0')
+            if self.provider == 'twilio':
+                self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+                self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+                self.from_number = os.environ.get('TWILIO_WHATSAPP_NUMBER', 'whatsapp:+14155238886')
+
+                if self.account_sid and self.auth_token:
+                    self.client = Client(self.account_sid, self.auth_token)
+                else:
+                    self.client = None
+
+            elif self.provider == 'meta':
+                self.access_token = os.environ.get('META_WHATSAPP_TOKEN')
+                self.phone_number_id = os.environ.get('META_PHONE_NUMBER_ID')
+                self.api_version = os.environ.get('META_API_VERSION', 'v21.0')
 
     def send_message_twilio(self, to_number, message_body):
         if not self.client:
