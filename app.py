@@ -23,12 +23,14 @@ def create_app():
     from routes.api import api_bp
     from routes.analytics import analytics_bp
     from routes.whatsapp import whatsapp_bp
+    from routes.settings import settings_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(bots_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(whatsapp_bp)
+    app.register_blueprint(settings_bp)
     
     @app.route('/static/manifest.webmanifest')
     def manifest():
