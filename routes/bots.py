@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from models import db
 from models.bot import Bot
 from models.rule import Rule
+from models.user import User
 
 bots_bp = Blueprint('bots', __name__)
 
