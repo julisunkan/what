@@ -9,7 +9,7 @@
             <h1 class="display-4">WhatsApp Bot Creator</h1>
             <p class="lead">Create and manage intelligent WhatsApp chatbots</p>
         </div>
-        
+
         <div class="row">
             <div class="col-md-6 mb-4">
                 <div class="card">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-6 mb-4">
                 <div class="card">
                     <div class="card-body">
@@ -43,7 +43,12 @@
                                 <label for="register-password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="register-password" name="password" autocomplete="new-password" required>
                             </div>
-                            <button type="submit" class="btn btn-success w-100">Create Account</button>
+                            <div class="mb-3">
+                                <label for="reg-phone" class="form-label">WhatsApp Phone Number (optional)</label>
+                                <input type="tel" class="form-control" id="reg-phone" name="phone_number" placeholder="+1234567890">
+                                <small class="text-muted">Include country code (e.g., +1 for US)</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Create Account</button>
                         </form>
                     </div>
                 </div>

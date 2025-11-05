@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+
+{% block title %}Profile - WhatsApp Bot Creator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <a href="{{ url_for('bots.dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back to Dashboard</a>
+        <h2>User Profile</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Profile Settings</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" value="{{ user.username }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">WhatsApp Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number or '' }}" placeholder="+1234567890">
+                        <small class="text-muted">Include country code (e.g., +1 for US). This number will receive bot activation messages.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

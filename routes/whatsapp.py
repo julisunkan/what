@@ -65,13 +65,32 @@ def twilio_webhook():
     )
     db.session.add(incoming_log)
     
-    response_text = active_bot.fallback_message
+    # Check if this is the bot owner's registered number
+    from models.user import User
+    clean_number = from_number.replace('whatsapp:', '')
+    bot_owner = User.query.get(active_bot.user_id)
     
-    rules = Rule.query.filter_by(bot_id=active_bot.id).all()
-    for rule in rules:
-        if rule.keyword.lower() in incoming_msg.lower():
-            response_text = rule.response
-            break
+    # Send welcome message with commands if it's a start/help command or first message
+    is_start_command = incoming_msg.lower() in ['start', 'help', 'menu', 'commands']
+    is_owner = bot_owner and bot_owner.phone_number and clean_number.endswith(bot_owner.phone_number.replace('+', '').replace('-', ''))
+    
+    if is_start_command or (is_owner and MessageLog.query.filter_by(bot_id=active_bot.id, sender=from_number).count() <= 1):
+        rules = Rule.query.filter_by(bot_id=active_bot.id).all()
+        if rules:
+            response_text = f"Welcome to {active_bot.name}! 🤖\n\nAvailable commands:\n\n"
+            for rule in rules:
+                response_text += f"• {rule.keyword}: {rule.response[:50]}{'...' if len(rule.response) > 50 else ''}\n"
+            response_text += f"\nType any keyword to get started, or send any message for general assistance."
+        else:
+            response_text = f"Welcome to {active_bot.name}! 🤖\n\nNo commands configured yet. Send any message to interact with the bot."
+    else:
+        response_text = active_bot.fallback_message
+        
+        rules = Rule.query.filter_by(bot_id=active_bot.id).all()
+        for rule in rules:
+            if rule.keyword.lower() in incoming_msg.lower():
+                response_text = rule.response
+                break
     
     outgoing_log = MessageLog(
         bot_id=active_bot.id,
@@ -134,13 +153,31 @@ def meta_webhook():
                 )
                 db.session.add(incoming_log)
                 
-                response_text = active_bot.fallback_message
+                # Check if this is the bot owner's registered number
+                from models.user import User
+                bot_owner = User.query.get(active_bot.user_id)
                 
-                rules = Rule.query.filter_by(bot_id=active_bot.id).all()
-                for rule in rules:
-                    if rule.keyword.lower() in message_body.lower():
-                        response_text = rule.response
-                        break
+                # Send welcome message with commands if it's a start/help command or first message
+                is_start_command = message_body.lower() in ['start', 'help', 'menu', 'commands']
+                is_owner = bot_owner and bot_owner.phone_number and from_number.endswith(bot_owner.phone_number.replace('+', '').replace('-', ''))
+                
+                if is_start_command or (is_owner and MessageLog.query.filter_by(bot_id=active_bot.id, sender=from_number).count() <= 1):
+                    rules = Rule.query.filter_by(bot_id=active_bot.id).all()
+                    if rules:
+                        response_text = f"Welcome to {active_bot.name}! 🤖\n\nAvailable commands:\n\n"
+                        for rule in rules:
+                            response_text += f"• {rule.keyword}: {rule.response[:50]}{'...' if len(rule.response) > 50 else ''}\n"
+                        response_text += f"\nType any keyword to get started, or send any message for general assistance."
+                    else:
+                        response_text = f"Welcome to {active_bot.name}! 🤖\n\nNo commands configured yet. Send any message to interact with the bot."
+                else:
+                    response_text = active_bot.fallback_message
+                    
+                    rules = Rule.query.filter_by(bot_id=active_bot.id).all()
+                    for rule in rules:
+                        if rule.keyword.lower() in message_body.lower():
+                            response_text = rule.response
+                            break
                 
                 outgoing_log = MessageLog(
                     bot_id=active_bot.id,

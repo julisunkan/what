@@ -18,7 +18,22 @@ def login_required(f):
 @login_required
 def dashboard():
     bots = Bot.query.filter_by(user_id=session['user_id']).all()
-    return render_template('dashboard.html', bots=bots)
+    user = User.query.get(session['user_id'])
+    return render_template('dashboard.html', bots=bots, user=user)
+
+@bots_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    user = User.query.get(session['user_id'])
+    
+    if request.method == 'POST':
+        phone_number = request.form.get('phone_number', '').strip()
+        user.phone_number = phone_number if phone_number else None
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('bots.dashboard'))
+    
+    return render_template('profile.html', user=user)
 
 @bots_bp.route('/bot/create', methods=['POST'])
 @login_required

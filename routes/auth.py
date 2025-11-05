@@ -14,32 +14,33 @@ def index():
 def register():
     username = request.form.get('username', '').strip()
     password = request.form.get('password', '').strip()
-    
+    phone_number = request.form.get('phone_number', '').strip()
+
     if not username or not password:
         flash('Username and password are required', 'danger')
         return redirect(url_for('auth.index'))
-    
+
     if User.query.filter_by(username=username).first():
         flash('Username already exists', 'danger')
         return redirect(url_for('auth.index'))
-    
-    user = User(username=username)
+
+    user = User(username=username, phone_number=phone_number if phone_number else None)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    
+
     session['user_id'] = user.id
     session['username'] = user.username
-    flash('Account created successfully!', 'success')
+    flash(f'Welcome {username}! Account created successfully.', 'success')
     return redirect(url_for('bots.dashboard'))
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
     username = request.form.get('username', '').strip()
     password = request.form.get('password', '').strip()
-    
+
     user = User.query.filter_by(username=username).first()
-    
+
     if user and user.check_password(password):
         session['user_id'] = user.id
         session['username'] = user.username
