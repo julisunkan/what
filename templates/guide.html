@@ -1,0 +1,368 @@
+
+{% extends "base.html" %}
+
+{% block title %}User Guide - WhatsApp Bot Creator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <a href="{{ url_for('bots.dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back to Dashboard</a>
+        <h2>📚 User Guide - How to Use WhatsApp Bot Creator</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-10">
+        <!-- Getting Started -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🚀 Getting Started</h4>
+            </div>
+            <div class="card-body">
+                <h5>What is this app?</h5>
+                <p>WhatsApp Bot Creator lets you create intelligent chatbots that automatically respond to WhatsApp messages based on keywords you define. No coding required!</p>
+                
+                <h5 class="mt-4">Quick Start (5 Steps)</h5>
+                <ol class="lead">
+                    <li><strong>Create a Bot</strong> - Give your bot a name</li>
+                    <li><strong>Add Rules</strong> - Define keywords and responses</li>
+                    <li><strong>Connect WhatsApp</strong> - Link your phone number (optional)</li>
+                    <li><strong>Test It</strong> - Send messages to see your bot respond</li>
+                    <li><strong>View Analytics</strong> - Track your bot's performance</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Step 1: Creating Your First Bot -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Step 1: Create Your First Bot 🤖</h4>
+            </div>
+            <div class="card-body">
+                <h5>How to create a bot:</h5>
+                <ol>
+                    <li>Go to the <strong>Dashboard</strong></li>
+                    <li>Find the "Create New Bot" card</li>
+                    <li>Enter a <strong>Bot Name</strong> (e.g., "Customer Support Bot")</li>
+                    <li>Add a <strong>Fallback Message</strong> - this is sent when the bot doesn't understand the message</li>
+                    <li>Click <strong>"Create Bot"</strong></li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <strong>💡 Tip:</strong> The fallback message is important! Use something friendly like "Sorry, I didn't understand that. Type 'help' for available commands."
+                </div>
+
+                <h5 class="mt-4">Example:</h5>
+                <ul>
+                    <li><strong>Bot Name:</strong> Restaurant Booking Bot</li>
+                    <li><strong>Fallback Message:</strong> "Sorry, I didn't understand. Type 'menu' to see available options or 'help' for assistance."</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 2: Adding Rules -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Step 2: Add Keyword Rules 📝</h4>
+            </div>
+            <div class="card-body">
+                <h5>What are rules?</h5>
+                <p>Rules tell your bot how to respond when someone sends a message containing specific keywords.</p>
+                
+                <h5>How to add a rule:</h5>
+                <ol>
+                    <li>Click <strong>"Edit"</strong> on your bot from the Dashboard</li>
+                    <li>Find the "Add New Rule" section</li>
+                    <li>Enter a <strong>Keyword</strong> - the word or phrase to look for</li>
+                    <li>Enter a <strong>Response</strong> - what the bot should say</li>
+                    <li>Click <strong>"Add Rule"</strong></li>
+                </ol>
+
+                <h5 class="mt-4">Example Rules:</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Keyword</th>
+                            <th>Response</th>
+                            <th>When it triggers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>hello</code></td>
+                            <td>Hi! Welcome to our restaurant. How can I help you today?</td>
+                            <td>User sends "hello", "Hello there", "hello!"</td>
+                        </tr>
+                        <tr>
+                            <td><code>hours</code></td>
+                            <td>We're open Monday-Friday 9AM-9PM, Saturday-Sunday 10AM-11PM</td>
+                            <td>User sends "hours", "opening hours", "what are your hours"</td>
+                        </tr>
+                        <tr>
+                            <td><code>menu</code></td>
+                            <td>View our menu: www.example.com/menu</td>
+                            <td>User sends "menu", "show menu", "see the menu"</td>
+                        </tr>
+                        <tr>
+                            <td><code>book</code></td>
+                            <td>To make a reservation, call us at +1234567890 or visit www.example.com/book</td>
+                            <td>User sends "book", "booking", "make a reservation"</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Keywords are case-insensitive and match partial words. If someone sends "What are your opening hours?", the keyword "hours" will match!
+                </div>
+
+                <h5 class="mt-4">Pro Tips:</h5>
+                <ul>
+                    <li>Use common words people might type (hello, hi, help, info, etc.)</li>
+                    <li>Add multiple rules for different topics</li>
+                    <li>Keep responses clear and helpful</li>
+                    <li>Include links, phone numbers, or next steps in responses</li>
+                    <li>The first matching rule wins - order matters!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 3: Managing Your Bot -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Step 3: Managing Your Bot ⚙️</h4>
+            </div>
+            <div class="card-body">
+                <h5>Bot Settings</h5>
+                <p>When editing a bot, you can:</p>
+                <ul>
+                    <li><strong>Change the name</strong> - Update your bot's name anytime</li>
+                    <li><strong>Update fallback message</strong> - Modify the default response</li>
+                    <li><strong>Toggle Active/Inactive</strong> - Turn your bot on or off</li>
+                </ul>
+
+                <h5 class="mt-3">Managing Rules</h5>
+                <ul>
+                    <li><strong>View all rules</strong> - See all keywords and responses in a table</li>
+                    <li><strong>Delete rules</strong> - Remove rules you don't need anymore</li>
+                    <li><strong>Add more rules</strong> - Keep adding as many as you need</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <strong>✅ Best Practice:</strong> Start with 5-10 essential rules, then add more based on what users ask about most.
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Connecting WhatsApp -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Step 4: Connect to WhatsApp 📱</h4>
+            </div>
+            <div class="card-body">
+                <h5>Add Your WhatsApp Number</h5>
+                <ol>
+                    <li>Go to <strong>Profile</strong> (link in Dashboard)</li>
+                    <li>Enter your WhatsApp phone number with country code (e.g., +1234567890)</li>
+                    <li>Click <strong>"Update Profile"</strong></li>
+                </ol>
+
+                <h5 class="mt-4">Set Up WhatsApp Integration (Advanced)</h5>
+                <p>To actually receive and send WhatsApp messages, you need to connect to a WhatsApp service provider. We support two options:</p>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Option 1: Twilio (Easiest)</h6>
+                                <ul class="small">
+                                    <li>Quick setup</li>
+                                    <li>Free trial credit</li>
+                                    <li>Pay per message</li>
+                                </ul>
+                                <p class="small text-muted">Good for testing and small-scale use</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Option 2: Meta Cloud API (Free)</h6>
+                                <ul class="small">
+                                    <li>1,000 free conversations/month</li>
+                                    <li>Direct from Meta</li>
+                                    <li>More setup required</li>
+                                </ul>
+                                <p class="small text-muted">Good for higher volume</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong>📖 Full Setup Guide:</strong> See <a href="https://github.com/your-repo/blob/main/WHATSAPP_SETUP.md" target="_blank" class="alert-link">WHATSAPP_SETUP.md</a> for detailed instructions on connecting Twilio or Meta WhatsApp.
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Testing Your Bot -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Step 5: Test Your Bot ✅</h4>
+            </div>
+            <div class="card-body">
+                <h5>How to test:</h5>
+                <ol>
+                    <li>Make sure your bot is marked as <span class="badge bg-success">Active</span></li>
+                    <li>If WhatsApp is connected, send a message to your bot's number</li>
+                    <li>Try different keywords you've configured</li>
+                    <li>Send a random message to test the fallback response</li>
+                </ol>
+
+                <h5 class="mt-4">Example Test Conversation:</h5>
+                <div class="bg-light p-3 rounded">
+                    <p class="mb-1"><strong>You:</strong> hello</p>
+                    <p class="mb-1"><strong>Bot:</strong> Hi! Welcome to our restaurant. How can I help you today?</p>
+                    <p class="mb-1"><strong>You:</strong> what are your hours?</p>
+                    <p class="mb-1"><strong>Bot:</strong> We're open Monday-Friday 9AM-9PM, Saturday-Sunday 10AM-11PM</p>
+                    <p class="mb-1"><strong>You:</strong> random gibberish xyz123</p>
+                    <p class="mb-0"><strong>Bot:</strong> Sorry, I didn't understand that. Type 'help' for available commands.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">View Analytics 📊</h4>
+            </div>
+            <div class="card-body">
+                <h5>Track Your Bot's Performance</h5>
+                <p>Go to the <strong>Analytics</strong> page to see:</p>
+                <ul>
+                    <li><strong>Total Messages:</strong> How many messages your bot has processed</li>
+                    <li><strong>Incoming:</strong> Messages received from users</li>
+                    <li><strong>Outgoing:</strong> Responses sent by your bot</li>
+                    <li><strong>Unique Users:</strong> How many different people have messaged your bot</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>💡 Tip:</strong> Use analytics to see which keywords are most popular and improve your bot's responses!
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Questions -->
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">❓ Common Questions</h4>
+            </div>
+            <div class="card-body">
+                <h5>Q: Can I have multiple bots?</h5>
+                <p>Yes! Create as many bots as you need. Each bot can have its own rules and settings.</p>
+
+                <h5>Q: How does keyword matching work?</h5>
+                <p>The bot looks for your keyword anywhere in the user's message (case-insensitive). For example, if your keyword is "help", it will match "help", "Help me", "I need help", etc.</p>
+
+                <h5>Q: What happens if multiple keywords match?</h5>
+                <p>The first matching rule wins. The bot stops checking after finding the first match.</p>
+
+                <h5>Q: Can I use special characters or emojis?</h5>
+                <p>Yes! You can use emojis and special characters in both keywords and responses.</p>
+
+                <h5>Q: Is there a limit on rules?</h5>
+                <p>No hard limit, but keep it reasonable. 50-100 rules is usually more than enough.</p>
+
+                <h5>Q: Can the bot understand natural language?</h5>
+                <p>This is a keyword-based bot, so it looks for specific words. It doesn't use AI to understand context. Keep keywords simple and common.</p>
+
+                <h5>Q: How do I make my bot respond to the first message?</h5>
+                <p>Users receive a welcome message automatically when they first message your bot (if you have WhatsApp connected). The welcome lists all available commands.</p>
+            </div>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">🌟 Best Practices</h4>
+            </div>
+            <div class="card-body">
+                <h5>Creating Effective Bots</h5>
+                <ul>
+                    <li>✅ Use simple, common keywords (hello, help, info, contact)</li>
+                    <li>✅ Keep responses concise and helpful</li>
+                    <li>✅ Include next steps or links in responses</li>
+                    <li>✅ Test with real users and update based on feedback</li>
+                    <li>✅ Make your fallback message helpful (suggest typing "help")</li>
+                    <li>❌ Don't use overly specific keywords that are hard to guess</li>
+                    <li>❌ Don't make responses too long (WhatsApp has limits)</li>
+                    <li>❌ Don't forget to set your bot to Active!</li>
+                </ul>
+
+                <h5 class="mt-4">Example Bot Structure</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>hello</code>, <code>hi</code></td><td>Welcome message</td></tr>
+                            <tr><td><code>help</code>, <code>commands</code></td><td>List all available commands</td></tr>
+                            <tr><td><code>hours</code>, <code>open</code></td><td>Business hours</td></tr>
+                            <tr><td><code>location</code>, <code>address</code></td><td>Physical address</td></tr>
+                            <tr><td><code>contact</code>, <code>phone</code></td><td>Contact information</td></tr>
+                            <tr><td><code>price</code>, <code>cost</code></td><td>Pricing information</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">⚡ Quick Reference</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Dashboard</h6>
+                        <ul class="small">
+                            <li>View all your bots</li>
+                            <li>Create new bots</li>
+                            <li>See bot status (Active/Inactive)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Edit Bot</h6>
+                        <ul class="small">
+                            <li>Update bot settings</li>
+                            <li>Add/delete rules</li>
+                            <li>View all keywords</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Profile</h6>
+                        <ul class="small">
+                            <li>Add WhatsApp number</li>
+                            <li>Update account settings</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Analytics</h6>
+                        <ul class="small">
+                            <li>Message statistics</li>
+                            <li>User engagement</li>
+                            <li>Bot performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

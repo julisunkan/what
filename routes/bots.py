@@ -15,6 +15,11 @@ def login_required(f):
     wrapper.__name__ = f.__name__
     return wrapper
 
+@bots_bp.route('/guide')
+@login_required
+def guide():
+    return render_template('guide.html')
+
 @bots_bp.route('/dashboard')
 @login_required
 def dashboard():
