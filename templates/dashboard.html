@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - WhatsApp Bot Creator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>My Bots</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create New Bot</h4>
+                <form method="POST" action="{{ url_for('bots.create_bot') }}">
+                    <div class="mb-3">
+                        <label for="bot-name" class="form-label">Bot Name</label>
+                        <input type="text" class="form-control" id="bot-name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fallback-message" class="form-label">Fallback Message</label>
+                        <textarea class="form-control" id="fallback-message" name="fallback_message" rows="3" placeholder="Sorry, I did not understand that."></textarea>
+                        <small class="text-muted">This message is sent when no keyword matches</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Bot</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if bots %}
+        {% for bot in bots %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ bot.name }}
+                        {% if bot.active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text text-muted small">{{ bot.fallback_message[:80] }}{% if bot.fallback_message|length > 80 %}...{% endif %}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Rules: {{ bot.rules|length }}
+                        </small>
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('bots.edit_bot', bot_id=bot.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form method="POST" action="{{ url_for('bots.delete_bot', bot_id=bot.id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this bot?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No bots created yet. Create your first bot using the form above!
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

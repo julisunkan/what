@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - WhatsApp Bot Creator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Analytics Dashboard</h2>
+        <p class="text-muted">View message statistics for all your bots</p>
+        <hr>
+    </div>
+</div>
+
+{% if bot_stats %}
+<div class="row">
+    {% for stat in bot_stats %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ stat.bot.name }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-muted">Total Messages</h6>
+                    <h3 class="mb-0">{{ stat.total_messages }}</h3>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <h6 class="text-muted">Incoming</h6>
+                        <h4 class="text-success mb-0">{{ stat.incoming }}</h4>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-muted">Outgoing</h6>
+                        <h4 class="text-info mb-0">{{ stat.outgoing }}</h4>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="text-muted">Unique Users</h6>
+                    <h4 class="mb-0">{{ stat.unique_senders }}</h4>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    Status: 
+                    {% if stat.bot.active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    No bots found. Create a bot first to see analytics.
+</div>
+{% endif %}
+{% endblock %}

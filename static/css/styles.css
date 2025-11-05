@@ -1,0 +1,44 @@
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.table {
+    background-color: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
+}
+
+.display-4 {
+    font-weight: 700;
+    color: #1c6ef2;
+}
+
+.lead {
+    color: #6c757d;
+}

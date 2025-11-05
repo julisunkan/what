@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ bot.name }} - WhatsApp Bot Creator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <a href="{{ url_for('bots.dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back to Dashboard</a>
+        <h2>Edit Bot: {{ bot.name }}</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Bot Settings</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="bot-name" class="form-label">Bot Name</label>
+                        <input type="text" class="form-control" id="bot-name" name="name" value="{{ bot.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fallback-message" class="form-label">Fallback Message</label>
+                        <textarea class="form-control" id="fallback-message" name="fallback_message" rows="3" required>{{ bot.fallback_message }}</textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="active" name="active" {% if bot.active %}checked{% endif %}>
+                        <label class="form-check-label" for="active">Active</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Bot</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add New Rule</h4>
+                <form method="POST" action="{{ url_for('bots.add_rule', bot_id=bot.id) }}">
+                    <div class="mb-3">
+                        <label for="keyword" class="form-label">Keyword</label>
+                        <input type="text" class="form-control" id="keyword" name="keyword" placeholder="e.g., hello" required>
+                        <small class="text-muted">Bot will respond when this word is detected in the message</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="response" class="form-label">Response</label>
+                        <textarea class="form-control" id="response" name="response" rows="3" placeholder="e.g., Hi there! How can I help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Rule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h4>Existing Rules ({{ rules|length }})</h4>
+        {% if rules %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Response</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rule in rules %}
+                    <tr>
+                        <td><strong>{{ rule.keyword }}</strong></td>
+                        <td>{{ rule.response[:100] }}{% if rule.response|length > 100 %}...{% endif %}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('bots.delete_rule', rule_id=rule.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No rules added yet. Add your first rule using the form above!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
