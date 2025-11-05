@@ -68,12 +68,14 @@ Preferred communication style: Simple, everyday language.
 
 ### Third-Party Services
 
-**WPPConnect** (Node.js gateway in `bot_gateway/`)
-- Purpose: Bridges WhatsApp Web protocol with the Flask backend
-- Communication: Posts incoming WhatsApp messages to Flask's `/api/get_response` endpoint via HTTP
-- Authentication: QR code scanning links the gateway to a WhatsApp account
-- Alternative considered: Official WhatsApp Business API (rejected due to cost and complexity)
-- Limitation: Requires Node.js runtime alongside Python
+**WhatsApp Integration** (Python-based)
+- Purpose: Enables bots to send and receive WhatsApp messages
+- Providers supported: Twilio API and Meta WhatsApp Cloud API
+- Communication: Webhooks receive incoming messages at `/webhook/twilio` and `/webhook/meta` endpoints
+- Security: Signature validation for both Twilio (X-Twilio-Signature) and Meta (X-Hub-Signature-256)
+- Message sending: Python service layer (`services/whatsapp_service.py`) handles API calls to Twilio or Meta
+- Alternative considered: WPPConnect (rejected due to Node.js dependency and unofficial protocol)
+- Limitation: Requires environment configuration (API keys, auth tokens, webhook secrets)
 
 ### Python Packages
 
@@ -89,16 +91,16 @@ Preferred communication style: Simple, everyday language.
 - Abstracts database operations
 - Provides model relationships and query interface
 
-### Node.js Packages
+### Python WhatsApp Packages
 
-**@wppconnect-team/wppconnect**: WhatsApp Web client
-- Handles WhatsApp protocol communication
-- Provides QR code for authentication
-- Manages message sending/receiving
+**twilio**: Official Twilio SDK for Python
+- Handles Twilio API authentication and message sending
+- Provides webhook request validation utilities
+- Used for both sending messages and validating incoming webhooks
 
-**axios**: HTTP client for API communication
-- Posts messages from WhatsApp to Flask backend
-- Handles JSON request/response
+**requests**: HTTP client for Meta API communication
+- Makes HTTP requests to Meta WhatsApp Cloud API
+- Handles JSON request/response for sending messages via Meta
 
 ### Frontend Dependencies
 
@@ -111,7 +113,15 @@ Preferred communication style: Simple, everyday language.
 
 **Environment variables**:
 - `SESSION_SECRET`: Flask session encryption key (defaults to dev key)
-- `FLASK_API_URL`: URL for Node.js gateway to reach Flask API (defaults to localhost:5000)
+- **Twilio Configuration** (for Twilio-based WhatsApp):
+  - `TWILIO_ACCOUNT_SID`: Twilio account identifier
+  - `TWILIO_AUTH_TOKEN`: Twilio API authentication token
+  - `TWILIO_WHATSAPP_NUMBER`: WhatsApp-enabled Twilio phone number (format: whatsapp:+1234567890)
+- **Meta Configuration** (for Meta WhatsApp Cloud API):
+  - `META_VERIFY_TOKEN`: Token for webhook subscription verification (required, no default)
+  - `META_APP_SECRET`: App secret for webhook signature validation (required)
+  - `META_ACCESS_TOKEN`: Access token for Meta Graph API
+  - `META_PHONE_NUMBER_ID`: WhatsApp Business Account phone number ID
 
 **Database**: SQLite file (`whatsapp_bot.db`)
 - Auto-created on first run via `db.create_all()`
@@ -122,8 +132,9 @@ Preferred communication style: Simple, everyday language.
 
 **Port Configuration**: 
 - Flask runs on port 5000
-- Node.js gateway connects to Flask via configurable URL
-- Both services must run simultaneously for full functionality
+- Webhook URLs must be publicly accessible (Replit provides automatic HTTPS)
+- Environment variables must be configured before webhooks can function
+- Webhook signature validation ensures security (required for production)
 
 **Replit Compatibility**:
 - SQLite works natively without configuration
