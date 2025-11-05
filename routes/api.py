@@ -15,8 +15,12 @@ def get_response():
     
     sender = data['sender']
     message = data['message'].strip()
+    bot_id = data.get('bot_id')
     
-    active_bot = Bot.query.filter_by(active=True).first()
+    if bot_id:
+        active_bot = Bot.query.filter_by(id=bot_id, active=True).first()
+    else:
+        active_bot = Bot.query.filter_by(active=True).first()
     
     if not active_bot:
         return jsonify({'response': 'No active bot found'}), 404
