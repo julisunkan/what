@@ -109,22 +109,38 @@ Preferred communication style: Simple, everyday language.
 - No build process required
 - Reduces custom CSS needs
 
+### API Key Management
+
+**User-Specific API Keys** (NEW - November 2025):
+- Users can now configure their Meta Cloud API or Twilio API keys directly in the dashboard
+- API keys are encrypted using Fernet (symmetric encryption) before storage in the database
+- Encryption key derived from `ENCRYPTION_SECRET` environment variable using PBKDF2-HMAC
+- Each user can have their own WhatsApp provider and credentials
+- Credentials are never displayed in plaintext - UI shows masked placeholders
+- WhatsAppService automatically uses user-specific credentials for webhook responses
+
+**Security Features**:
+- AES-128 encryption via Fernet for all stored API keys
+- PBKDF2-HMAC key derivation (100,000 iterations) from `ENCRYPTION_SECRET`
+- Password-type input fields prevent credential exposure
+- Credentials validated before provider switching to prevent runtime errors
+- User model includes methods: `set_meta_credentials()`, `set_twilio_credentials()`, `get_meta_credentials()`, `get_twilio_credentials()`
+
 ### Environment Configuration
 
-**Environment variables**:
-- `SESSION_SECRET`: Flask session encryption key (defaults to dev key)
-- **Twilio Configuration** (for Twilio-based WhatsApp):
-  - `TWILIO_ACCOUNT_SID`: Twilio account identifier
-  - `TWILIO_AUTH_TOKEN`: Twilio API authentication token
-  - `TWILIO_WHATSAPP_NUMBER`: WhatsApp-enabled Twilio phone number (format: whatsapp:+1234567890)
-- **Meta Configuration** (for Meta WhatsApp Cloud API):
-  - `META_VERIFY_TOKEN`: Token for webhook subscription verification (required, no default)
-  - `META_APP_SECRET`: App secret for webhook signature validation (required)
-  - `META_ACCESS_TOKEN`: Access token for Meta Graph API
-  - `META_PHONE_NUMBER_ID`: WhatsApp Business Account phone number ID
+**Required Environment Variables**:
+- `ENCRYPTION_SECRET`: **REQUIRED** - Encryption key for securing API credentials in database. Must be set before starting the application.
+- `SESSION_SECRET`: Flask session encryption key (defaults to dev key in development)
+
+**Optional Environment Variables** (for backward compatibility or webhook validation):
+- **Meta Configuration** (optional - users can configure in dashboard):
+  - `META_VERIFY_TOKEN`: Token for webhook subscription verification
+  - `META_APP_SECRET`: App secret for webhook signature validation
+- **Legacy Twilio/Meta Configuration**: Environment variables still supported as fallback when user has no credentials configured
 
 **Database**: SQLite file (`whatsapp_bot.db`)
 - Auto-created on first run via `db.create_all()`
+- Stores encrypted user credentials in `users` table
 - Single-file deployment simplifies backup and migration
 - No external database service required
 
