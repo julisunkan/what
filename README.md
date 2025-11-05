@@ -1,6 +1,6 @@
 # WhatsApp Bot Creator
 
-A full-stack Progressive Web App (PWA) for creating and managing WhatsApp chatbots. Built with Python Flask, SQLite, and WPPConnect for WhatsApp integration.
+A full-stack Progressive Web App (PWA) for creating and managing WhatsApp chatbots. Built entirely with Python Flask, SQLite, and integrates with WhatsApp via Twilio or Meta's Cloud API.
 
 ## Features
 
@@ -9,7 +9,7 @@ A full-stack Progressive Web App (PWA) for creating and managing WhatsApp chatbo
 - **Keyword Rules**: Define keyword-response pairs for intelligent conversations
 - **Analytics Dashboard**: Track message statistics and user engagement
 - **Progressive Web App**: Installable on mobile devices with offline support
-- **WhatsApp Integration**: Connect to WhatsApp using WPPConnect gateway
+- **WhatsApp Integration**: Pure Python integration with Twilio or Meta WhatsApp Cloud API
 - **Real-time Logging**: Track all incoming and outgoing messages
 - **Bootstrap UI**: Clean, responsive interface with inline alerts
 
@@ -28,7 +28,10 @@ A full-stack Progressive Web App (PWA) for creating and managing WhatsApp chatbo
 │   ├── auth.py            # Authentication routes
 │   ├── bots.py            # Bot management routes
 │   ├── api.py             # API endpoint for WhatsApp
-│   └── analytics.py       # Analytics routes
+│   ├── analytics.py       # Analytics routes
+│   └── whatsapp.py        # WhatsApp webhook endpoints
+├── services/               # Service modules
+│   └── whatsapp_service.py # WhatsApp messaging service
 ├── templates/              # HTML templates
 │   ├── base.html
 │   ├── index.html         # Login/Register page
@@ -43,10 +46,7 @@ A full-stack Progressive Web App (PWA) for creating and managing WhatsApp chatbo
 │   │   └── sw-register.js
 │   ├── icons/             # PWA icons
 │   └── manifest.webmanifest
-├── bot_gateway/           # WhatsApp gateway (Node.js)
-│   ├── bot.js
-│   ├── package.json
-│   └── README.md
+├── WHATSAPP_SETUP.md      # WhatsApp integration guide
 └── whatsapp_bot.db        # SQLite database (auto-created)
 ```
 
@@ -62,6 +62,8 @@ Python dependencies are automatically installed via `pyproject.toml`:
 - Flask
 - Flask-SQLAlchemy
 - Werkzeug
+- Twilio (for WhatsApp integration)
+- Requests
 
 ### 3. Set Environment Variables
 
@@ -96,36 +98,37 @@ Access the web app at: `http://0.0.0.0:5000` or your Replit URL.
 2. Keywords are matched using case-insensitive substring matching
 3. Example: keyword "hello" will match "Hello", "hello there", etc.
 
-## WhatsApp Integration
+## WhatsApp Integration (Pure Python! 🐍)
 
-### Setup WhatsApp Gateway (Optional)
+Your bot can connect to WhatsApp using **100% Python** - no Node.js required!
 
-The `bot_gateway` folder contains a Node.js application that connects WhatsApp to your Flask API.
+### Quick Start
 
-#### Prerequisites
-- Node.js 18+ installed
-- Chrome/Chromium browser (for WPPConnect)
+You have two options:
 
-#### Steps
+**Option 1: Twilio** (Easiest)
+- Quick setup with Twilio's WhatsApp sandbox
+- Pay-per-message pricing (free trial included)
+- Great for testing and production
 
-1. Navigate to the bot_gateway folder:
-```bash
-cd bot_gateway
-npm install
-```
+**Option 2: Meta WhatsApp Cloud API** (Free)
+- Free tier: 1,000 conversations/month
+- Direct integration with Meta's official API
+- Requires Facebook Business account setup
 
-2. Ensure your Flask app is running
+### Setup Steps
 
-3. Start the WhatsApp gateway:
-```bash
-npm start
-```
+1. **Choose your provider** (Twilio or Meta)
+2. **Configure environment variables** in Replit Secrets:
+   - For Twilio: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`
+   - For Meta: `META_WHATSAPP_TOKEN`, `META_PHONE_NUMBER_ID`
+3. **Set up webhook** in Twilio/Meta console pointing to your Replit URL
+4. **Create a bot** in the dashboard with keyword rules
+5. **Send a test message** to your WhatsApp number
 
-4. Scan the QR code with WhatsApp (Settings → Linked Devices)
+### Full Documentation
 
-5. Send a test message to your WhatsApp number
-
-For detailed instructions, see `bot_gateway/README.md`.
+See **[WHATSAPP_SETUP.md](WHATSAPP_SETUP.md)** for complete step-by-step instructions for both providers.
 
 ## API Endpoint
 
@@ -218,23 +221,16 @@ Access analytics at `/analytics`.
 1. Click the "Publish" button in Replit
 2. Configure your custom domain (optional)
 3. The app will be deployed automatically
-
-### Using Ngrok (for WhatsApp Gateway)
-
-If you want to connect the WhatsApp gateway to a local Flask instance:
-
-```bash
-ngrok http 5000
-```
-
-Update `FLASK_API_URL` in `bot_gateway/bot.js` with the ngrok URL.
+4. Update webhook URLs in Twilio/Meta console with your production domain
 
 ## Security Notes
 
 - Passwords are hashed using Werkzeug's secure password hashing
 - Session secrets should be set via environment variables in production
-- The API endpoint is public - consider adding API key authentication for production use
+- Webhook endpoints include signature validation for Twilio and Meta
+- All WhatsApp API credentials are stored in Replit Secrets (environment variables)
 - SQLite is suitable for development; consider PostgreSQL for production
+- Never expose API tokens or app secrets in code or version control
 
 ## Technologies Used
 
@@ -242,7 +238,7 @@ Update `FLASK_API_URL` in `bot_gateway/bot.js` with the ngrok URL.
 - **Database**: SQLite
 - **Frontend**: HTML5, Bootstrap 5, Vanilla JavaScript
 - **PWA**: Service Workers, Web App Manifest
-- **WhatsApp**: WPPConnect (Node.js)
+- **WhatsApp**: Twilio SDK / Meta WhatsApp Cloud API (Python)
 - **Deployment**: Replit
 
 ## Troubleshooting
@@ -254,15 +250,17 @@ Update `FLASK_API_URL` in `bot_gateway/bot.js` with the ngrok URL.
 - Ensure you're accessing via HTTPS (Replit provides this automatically)
 - Check browser console for service worker errors
 
-### WhatsApp gateway connection issues
-- Verify Flask app is running and accessible
-- Check that Chrome/Chromium is installed
-- Delete `bot_gateway/tokens` folder and rescan QR code
+### WhatsApp integration not working
+- Check environment variables are set correctly in Replit Secrets
+- Verify webhook URL is correct in Twilio/Meta console
+- Make sure webhook signature validation credentials are configured
+- Test the webhook endpoint responds with 200 OK
 
 ### Messages not being processed
 - Ensure at least one bot is marked as "Active"
 - Check that keywords are correctly configured
 - Review message logs in the analytics dashboard
+- Verify webhook endpoints are receiving requests (check workflow logs)
 
 ## License
 
