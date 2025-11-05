@@ -18,14 +18,25 @@ def login_required(f):
 @bots_bp.route('/dashboard')
 @login_required
 def dashboard():
-    bots = Bot.query.filter_by(user_id=session['user_id']).all()
     user = User.query.get(session['user_id'])
+    
+    if not user:
+        flash('User not found. Please login again.', 'danger')
+        session.clear()
+        return redirect(url_for('auth.index'))
+    
+    bots = Bot.query.filter_by(user_id=session['user_id']).all()
     return render_template('dashboard.html', bots=bots, user=user)
 
 @bots_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     user = User.query.get(session['user_id'])
+    
+    if not user:
+        flash('User not found. Please login again.', 'danger')
+        session.clear()
+        return redirect(url_for('auth.index'))
     
     if request.method == 'POST':
         phone_number = request.form.get('phone_number', '').strip()
